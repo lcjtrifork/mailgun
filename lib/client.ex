@@ -112,31 +112,31 @@ defmodule Mailgun.Client do
       atts when atts in [nil, []] ->
         send_without_attachments(conf, email)
       atts when is_list(atts) ->
-        send_with_attachments(conf, Map.delete(email, :attachments), atts)
+        send_with_attachments(conf, Keyword.delete(email, :attachments), atts)
     end
   end
   defp send_without_attachments(conf, email) do
-    attrs = Map.merge(email, %{
-      to: Map.fetch!(email, :to),
-      from: Map.fetch!(email, :from),
-      text: Map.get(email, :text, ""),
-      html: Map.get(email, :html, ""),
-      subject: Map.get(email, :subject, ""),
-    })
+    attrs = Keyword.merge(email, [
+      to: Keyword.fetch!(email, :to),
+      from: Keyword.fetch!(email, :from),
+      text: Keyword.get(email, :text, ""),
+      html: Keyword.get(email, :html, ""),
+      subject: Keyword.get(email, :subject, ""),
+    ])
     ctype   = 'application/x-www-form-urlencoded'
-    body    = URI.encode_query(Map.drop(attrs, [:attachments]))
+    body    = URI.encode_query(Keyword.drop(attrs, [:attachments]))
 
     request(conf, :post, url("/messages", conf[:domain]), "api", conf[:key], [], ctype, body)
   end
   defp send_with_attachments(conf, email, attachments) do
     attrs =
       email
-      |> Map.merge(%{
-        to: Map.fetch!(email, :to),
-        from: Map.fetch!(email, :from),
-        text: Map.get(email, :text, ""),
-        html: Map.get(email, :html, ""),
-        subject: Map.get(email, :subject, "")})
+      |> Keyword.merge([
+        to: Keyword.fetch!(email, :to),
+        from: Keyword.fetch!(email, :from),
+        text: Keyword.get(email, :text, ""),
+        html: Keyword.get(email, :html, ""),
+        subject: Keyword.get(email, :subject, "")])
       |> Enum.map(fn
         {k, v} when is_binary(v) -> {k, String.to_char_list(v)}
         {k, v} -> {k, v}
