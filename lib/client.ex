@@ -138,7 +138,7 @@ defmodule Mailgun.Client do
         html: Keyword.get(email, :html, ""),
         subject: Keyword.get(email, :subject, "")])
       |> Enum.map(fn
-        {k, v} when is_binary(v) -> {k, String.to_char_list(v)}
+        {k, v} when is_binary(v) -> {k, String.to_charlist(v)}
         {k, v} -> {k, v}
       end)
       |> Enum.into(%{})
@@ -150,7 +150,7 @@ defmodule Mailgun.Client do
     attachments =
       Enum.reduce(attachments, [], fn upload, acc ->
         data = parse_attachment(upload) |> :erlang.binary_to_list
-        [{:attachment, String.to_char_list(upload.filename), data} | acc]
+        [{:attachment, String.to_charlist(upload.filename), data} | acc]
       end)
 
     body = format_multipart_formdata(boundary, attrs, attachments)
@@ -195,7 +195,7 @@ defmodule Mailgun.Client do
   def url(path, domain), do: Path.join([domain, path])
 
   def request(conf, method, url, user, pass, headers, ctype, body) do
-    url  = String.to_char_list(url)
+    url  = String.to_charlist(url)
     opts = conf[:httpc_opts] || []
 
     case method do
@@ -210,7 +210,7 @@ defmodule Mailgun.Client do
   end
 
   defp auth_header(user, pass) do
-    {'Authorization', 'Basic ' ++ String.to_char_list(Base.encode64("#{user}:#{pass}"))}
+    {'Authorization', 'Basic ' ++ String.to_charlist(Base.encode64("#{user}:#{pass}"))}
   end
 
   defp normalize_response(response) do
