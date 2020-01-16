@@ -89,6 +89,9 @@ defmodule Mailgun.Client do
       def send_email(email) do
         unquote(__MODULE__).send_email(conf(), email)
       end
+      def send_email(conf, email) do
+        unquote(__MODULE__).send_email(conf, email)
+      end
       def get_events(args) do
         unquote(__MODULE__).get_events(conf(),args)
       end
